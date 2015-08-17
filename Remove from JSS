@@ -1,0 +1,26 @@
+#!/bin/csh
+
+## It has to be a csh script
+# getting UUID
+set UUID=`ioreg -rd1 -c IOPlatformExpertDevice | awk '/IOPlatformUUID/ { split($0, line, "\""); printf("%s\n", line[4]); }'`
+
+# deleting computer from casper with UUID
+curl -k -v -u username:userpassword https://yourjss.XXX.net:8443/JSSResource/computers/udid/$UUID -X DELETE
+
+# deleting computer from casper with macaddress
+
+set CAM=`networksetup -getmacaddress en1 | cut -c18-35 |sed 's/:/./g'`
+
+curl -k -v -u username:userpassword https://yourjss.XXX.net:8443/JSSResource/computers/macaddress/$CAM -X DELETE
+
+
+set JAM=`networksetup -getmacaddress en0 | cut -c18-35 |sed 's/:/./g'`
+
+curl -k -v -u username:userpassword https://p-svl-casper.juniper.net:8443/JSSResource/computers/macaddress/$JAM -X DELETE
+
+echo
+ioreg -c "IOPlatformExpertDevice" | awk -F '"' '/IOPlatformSerialNumber/ {print $4}'
+echo
+
+
+exit
