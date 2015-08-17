@@ -1,0 +1,21 @@
+#!/bin/csh
+# delete HD
+
+set UUID=`diskutil cs info disk0s2|grep LVG |awk '{ print $4; }'`
+
+echo "$UUID"
+
+diskutil cs delete $UUID
+
+
+diskutil partitionDisk disk0 GPT JHFS+ Macintosh\ HD 100%
+
+DELETE
+
+echo
+ioreg -c "IOPlatformExpertDevice" | awk -F '"' '/IOPlatformSerialNumber/ {print $4}'
+echo
+
+
+exit
+
