@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Enabling Apple Remote Desktop Agent
+# allowAccessFor may not be combined with other options
+kickstart="/System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart"
+$kickstart -activate -configure -allowAccessFor -specifiedUsers
+# Setting Remote Management Privileges for Users
+$kickstart -configure -access -on -privs -all -users admin
+# Enable the Remote Management menu extra.
+$kickstart -configure -clientopts -setmenuextra -menuextra yes
+
