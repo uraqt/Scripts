@@ -1,0 +1,8 @@
+#!/bin/bash
+
+sudo systemsetup -setnetworktimeserver ntp.XXXX.net
+
+sleep 5
+
+sudo systemsetup -setusingnetworktime on
+
