@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# turning on logging
+
+odutil set log debug
+
+Sleep 20
+
+## removing from AD
+dsconfigad -remove -force -u XuserneameX -p XpasswordX
+
+
+## Use your domain name between the quotes, usually something like "com.domain.pretendco"
+dsconfigad -force -add jnpr.net -username XuserneameX -password XpasswordX -ou CN=Computers,DC=XX,DC=net -mobile enable -mobileconfirm disable -localhome enable -useuncpath disable -shell /bin/bash -uid uidNumber -gid gidNumber
+
+
+Sleep 20
+
+
+fi
+
+
+exit 0
+
