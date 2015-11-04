@@ -267,8 +267,30 @@ profiles -I -F /Users/Shared/Profile.mobileconfig
 # CIS 2.10 disabling core dumps
 launchctl limit core 0
 
+# Dummy package with image date and OS
+TD=`date +"%Y-%m-%d"`
+OS=“10.11”
+touch /Library/Application\ Support/JAMF/Receipts/"$OS Imaged $TD".pkg
+
+
+# Run Recon to update JSS record with the new computer name created in the admin script
+/usr/local/bin/jamf recon
+
+sleep 5
+
 # Event to start casper FDE
-jamf policy -event FDE
+/usr/local/bin/jamf policy -event FDE
+
+
+# Append the following line to the end of asl.conf
+#printf "\n*.*\t@172.24.0.216:9997" >> /etc/syslog.conf
+echo "*.*   @172.24.0.216:9997" >> /etc/syslog.conf
+
+launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist
+sleep 3
+launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd.plist
+
+
 
 # Removing profile in ~/Shared to block system prefs Profiles.
 rm /Users/Shared/Profile.mobileconfig
