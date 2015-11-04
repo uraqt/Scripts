@@ -24,6 +24,16 @@ sudo dseditgroup -o edit -a $SN -t user admin
 
 sleep 10
 
+# Stopping syslog to edit beta - X.10.11
+sudo launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist
+
+# Adding sshd to syslog need for syslog fowarding
+syslog -module com.openssh.sshd enable 1
+
+# Restarting syslog
+sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist
+
+
 # Creating machine name
 
 # Getting Hardware type
