@@ -1,0 +1,10 @@
+﻿#!/bin/bash
+
+jamf installAllCached
+
+Sleep 15
+
+osascript -e 'tell app "loginwindow" to «event aevtrrst»'
+
+
+exit

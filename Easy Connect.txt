@@ -1,0 +1,528 @@
+﻿#!/bin/bash
+#cat <<'EOF' > /Users/Shared/certrepair.command
+#!/bin/bash
+
+# updates
+#7/12/16 - removed wifi
+#7/12/16 - added wifi
+#7/12/16 - closed addtional pki popups
+#6/30/16 - overhaul - clean up script. easier to read and modify.
+#6/30/16 - added prompting for username
+#6/30/16 - set pki client kill loop to close out the firefox bug.
+#5/12/16 - removes .tblive directory completely before starting. (related to bug not able to enroll)
+#5/12/16 - removed tblive.rat creation and have script kill pki client (related to bug not able to enroll)
+#3/29/15 - modified scripts to be moved to /Users/Shared
+#1/13/15 - updated script to reflect changes on pulse secure 
+#1/12/15 - changed wait time from 10 seconds to 12 seconds after killing pki agent.
+#1/12/15 - checks if pki client is installed if not notifies user.
+#1/12/15 - checks if profile is installed if not notifies user.
+#1/12/15 - moved scripts to /Users/Shared directory
+#1/6/15 - firefox bugs. - creates the tblive.rat so no additional popup.
+#1/6/15 - if script fails creates a zip directory on desktop and suggests user to e-mail ctg group with the file.
+#1/6/15 - if pki client is not installed informs users.
+#1/6/15 - moved file contents to /Users/Shared and confirm deletion of files on exit.
+#12/28/15 - pkiport syntax changed updated for compatiblity for 10.10.11
+#5/16/16 - increased duration to 240 seconds.
+#5/16/16 - fixed some typos.
+#5/16/16 - updated kerberos auth with kinit (user has to input their password). also attempts 3 times before giving up.
+#10/16/15 - bug where user has mutliple paths. checking right profile. added /usr/bin/profiles
+#10/16/15 - bug where restarting services prevented updating the connection sets.
+#10/10/15 - updated kerberos logic 
+#9/28/15 - updated with new connections provided by Lou.
+#9/21/15 - added #!/bin/bash 
+#9/9/15 - increased duration to 180 seconds from 155. 
+#9/9/15 - fix kerberos messages now confirms if ticket is valid and opens ticketviewer app if not valid with instructions.
+
+#conntections sets
+cat <<'EOF' > /Users/Shared/ez.components.jnprpreconfig
+schema version {
+    version: "1"
+}
+
+machine settings {
+    version: "39"
+    guid: "83c5f9a2-6462-47f4-b4be-216adfeef40e"
+    connection-source: "preconfig"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    allow-save: "true"
+    user-connection: "true"
+    splashscreen-display: "true"
+    dynamic-trust: "true"
+    dynamic-connection: "true"
+    captive-portal-detection: "false"
+    FIPSClient: "false"
+    wireless-suppression: "true"
+}
+
+ive "e793721e-9c3e-4dd0-857e-a27723cb3a80" {
+    friendly-name: "EASY VPN - APAC"
+    version: "11"
+    guid: "e793721e-9c3e-4dd0-857e-a27723cb3a80"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://apac-easy.juniper.net"
+    uri: "https://apac-easy.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.24.245.20 172.24.246.15 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+ive "053c73a9-bcb0-47e8-97e9-4910e337ceb5" {
+    friendly-name: "EASY VPN - BNG"
+    version: "10"
+    guid: "053c73a9-bcb0-47e8-97e9-4910e337ceb5"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://bng-easy.juniper.net"
+    uri: "https://bng-easy.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+ive "833e3a43-4a0a-465d-bccf-2420232c0dce" {
+    friendly-name: "EASY VPN - EMEA"
+    version: "8"
+    guid: "833e3a43-4a0a-465d-bccf-2420232c0dce"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://emea-easy.juniper.net"
+    uri: "https://emea-easy.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+ive "767b4606-f00d-4a0a-9bdb-9455b71925f6" {
+    friendly-name: "EASY VPN - SVL"
+    version: "8"
+    guid: "767b4606-f00d-4a0a-9bdb-9455b71925f6"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://svl-easy.juniper.net"
+    uri: "https://svl-easy.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+ive "7797f382-c717-4549-a708-a4bb0d3c4cad" {
+    friendly-name: "EASY VPN - SYD"
+    version: "9"
+    guid: "7797f382-c717-4549-a708-a4bb0d3c4cad"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://syd-easy.juniper.net"
+    uri: "https://syd-easy.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+ive "1195b5aa-510f-4f1e-b97e-1fc6c0714784" {
+    friendly-name: "EASY VPN - WF"
+    version: "8"
+    guid: "1195b5aa-510f-4f1e-b97e-1fc6c0714784"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://wf-easy.juniper.net"
+    uri: "https://wf-easy.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+ive "ea38d27f-54c6-4c02-9750-96e5c1203ea9" {
+    friendly-name: "RSA - SA"
+    version: "8"
+    guid: "ea38d27f-54c6-4c02-9750-96e5c1203ea9"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    uri-list: "https://sa.juniper.net"
+    uri: "https://sa.juniper.net"
+    connection-policy-override: "true"
+    use-for-connect: "true"
+    use-for-secure-meetings: "false"
+    this-server: "false"
+    uri-list-use-last-connected: "false"
+    uri-list-randomize: "false"
+    connection-identity: "user"
+    connection-policy: "manual AND ( NOT dns-server(physical, 10.99.55.15 10.215.194.50 66.129.255.75 172.21.200.60 172.24.16.115 172.28.144.15 172.29.131.60 172.29.135.60 172.29.139.60 172.29.143.60 172.29.147.60 172.29.151.60 172.29.155.60))"
+    client-certificate-location-system: "false"
+    reconnect-at-session-timeout: "false"
+}
+
+8021x "7c868f7f-1975-46c3-b155-5a9b5bca13f6" {
+    friendly-name: "Wired"
+    version: "12"
+    guid: "7c868f7f-1975-46c3-b155-5a9b5bca13f6"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    adapter-type: "wired"
+    outer-username: "anonymous"
+    non-broadcast-ssid: "false"
+    ca1: "CN=AddTrust External CA Root, OU=AddTrust External TTP Network, O=AddTrust AB, C=SE"
+    server1: "ANY"
+    ca2: "CN=COMODO RSA Certification Authority, O=COMODO CA Limited, L=Salford, ST=Greater Manchester, C=GB"
+    server2: "ANY"
+    ca3: "CN=Juniper Networks Root CA, OU=Juniper Certificate Authority, O=&quot;Juniper Networks, Inc.&quot;, L=Sunnyvale, ST=California, C=US, emailAddress=ca-admin@juniper.net"
+    server3: "ANY"
+    ca4: "CN=COMODO RSA Domain Validation Secure Server CA, O=COMODO CA Limited, L=Salford, ST=Greater Manchester, C=GB"
+    server4: "ANY"
+    connection-identity: "user-after-desktop"
+    connection-policy: "automatic"
+    machine-preferred-realm: "L2-Machine"
+    preferred-realm: "L2-Wired"
+    client-certificate-location-system: "false"
+}
+
+8021x "27480248-9bc4-4608-ba69-bf757f563db6" {
+    friendly-name: "Wireless"
+    version: "12"
+    guid: "27480248-9bc4-4608-ba69-bf757f563db6"
+    server-id: "4ab81593-bdb7-4502-85bd-e4b40bd9edff"
+    connection-source: "preconfig"
+    adapter-type: "wireless"
+    outer-username: "anonymous"
+    scan-list: "JuniperEasyConnect"
+    non-broadcast-ssid: "false"
+    ca1: "CN=AddTrust External CA Root, OU=AddTrust External TTP Network, O=AddTrust AB, C=SE"
+    server1: "ANY"
+    ca2: "CN=COMODO RSA Certification Authority, O=COMODO CA Limited, L=Salford, ST=Greater Manchester, C=GB"
+    server2: "ANY"
+    ca3: "CN=COMODO RSA Domain Validation Secure Server CA, O=COMODO CA Limited, L=Salford, ST=Greater Manchester, C=GB"
+    server3: "ANY"
+    ca4: "CN=Juniper Networks Root CA, OU=Juniper Certificate Authority, O=&quot;Juniper Networks, Inc.&quot;, L=Sunnyvale, ST=California, C=US, emailAddress=ca-admin@juniper.net"
+    server4: "ANY"
+    connection-identity: "user"
+    connection-policy: "automatic"
+    client-certificate-location-system: "false"
+}
+EOF
+
+#script
+cat <<'EOF' > /Users/Shared/ez2.command
+#!/bin/bash
+#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+congrat="Certificate enrollment is now complete. 
+
+Please test your Pulse Connections by clicking on Pulse Secure and selecting a portal.
+"
+certnotfound="Certificate was not found. Enrollment failed. If this is the first time seeing this message please 
+reboot your system and re-run the enrollment script. If it fails again please contact the helpdesk. 
+If the helpdesk needs additional assistance please ask them reach out to Client Technology Group.
+"
+enrollf="Unable to trigger enrollment. If this is the first time seeing this message please reboot your
+system and re-run the enrollment script. If it fails again please contact the helpdesk. If the 
+helpdesk needs additional assistance please ask them reach out to Client Technology Group.
+"
+pkidetect="PKI Client enrollment window detected!
+
+Please select Continue and Close the application.
+"
+ty60="Thank you for signing up for Easy Connect for Mac.
+
+Symantec PKI client app will open automatically and require you to select \"Continue\" within 1 
+minute. The Mac OS will ask you to enter your password to add certificate to the KeyChain app. 
+Please select \"Close\" in the Symantec PKI client app when the process is finished.
+"
+passe="Enter your password then hit enter. Please note the cursor does not move."
+passf="Please contact the helpdesk. The password entered was not accepted.
+"
+passinc="Incorrect password. Please re-enter your password:
+"
+enterf="Please contact the helpdesk. You do not know how to enter your User ID.
+"
+enterj="Please enter your Juniper User ID. NOT your e-mail address:
+"
+enteru="Please enter in your Juniper User ID:
+"
+errorp="Profile is not installed. Please run \"Easy Connect Profile\" from Self Service and re-run 
+the \"Easy Connect Enrollment Script\". For enrollment instructions please visit our website @ 
+http://core.juniper.net/it/itc/easyconnect/enroll-mac.html. If you need additional assistance 
+please contact the helpdesk.
+"
+errork="PKI Client is not installed. Please run \"Easy Connect App\" from Self Service and re-run
+the \"Easy Connect Enrollment Script\". For enrollment instructions please visit our website @ 
+http://core.juniper.net/it/itc/easyconnect/enroll-mac.html. If you need additional assistance 
+please contact the helpdesk.
+"
+title="____________________________________________________________________________________________________
+
+  █ █ █ ███ ███ ███ ███ ███   Juniper Networks
+█ █ █ █ █ █  █  ███ ██  █     Easy Connect Enrollment Script v2.0
+███ ███ █ █ ███ █   ███ █     Updated: 07/12/16 
+____________________________________________________________________________________________________
+"                                                                                    
+thku="Thank You - Easy Connect Team
+____________________________________________________________________________________________________
+"
+# bash title
+echo -n -e "\033]0;Juniper Networks - Enrollment Script\007"
+# terminal size
+printf '\e[8;25;100t'
+# move terminal window top left
+printf '\e[3;0;0t'
+clear
+# check to see if PKI Client is installed.
+usernamed=$(whoami)
+if [ ! -d "/Users/$usernamed/.tblive-4/" ]
+	then
+	clear
+	echo "$title"
+	echo "$errork"
+	echo "$thku"
+	rm /Users/Shared/ez2.command 2> /dev/null
+	rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+	exit
+fi
+# check to see if profile is installed.
+pro1=$(/usr/bin/profiles -Cv | grep com.symantec.pkiclient.autoenroll)
+if [[ -z $pro1 ]]
+	then
+	clear
+	echo "$title"
+	echo "$errorp"
+	echo "$thku"
+	rm /Users/Shared/ez2.command 2> /dev/null
+	rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+	exit
+fi
+# prompt user for username
+clear
+echo "$title"
+echo "$enteru"
+read username
+usercheck=$(echo $username | grep @)
+
+if [ ! -z $usercheck ]
+then 
+	clear
+	echo "$title"
+	echo "$enterj"
+	read username
+	usercheck=$(echo $username | grep @)
+	if [ ! -z $usercheck ]
+	then 
+		clear
+		echo "$title"
+		echo "$enterj"
+		read username
+		usercheck=$(echo $username | grep @)
+		if [ ! -z $usercheck ]
+		then 
+			clear
+			echo "$title"
+			echo "$enterf"
+			echo "$thku"
+			rm /Users/Shared/ez2.command 2> /dev/null
+			rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+			exit
+		fi
+	fi		
+fi
+
+# add a kerberos ticket
+clear
+echo "$title"
+echo "$passe"
+echo ""
+kdestroy -a
+kinit $username@JNPR.NET
+ktic=$(klist | grep @JNPR.NET)
+if [[ -z $ktic ]]
+then
+	clear
+	echo "$title"
+	echo "$passinc"
+	kdestroy -a
+	kinit $username@JNPR.NET
+	ktic=$(klist | grep @JNPR.NET)
+	if [[ -z $ktic ]]
+	then
+		clear
+		echo "$title"
+		echo "$passinc"
+		kdestroy -a
+		kinit $username@JNPR.NET
+		ktic=$(klist | grep @JNPR.NET)
+		if [[ -z $ktic ]]
+		then
+			clear
+			echo "$title"
+			echo "$passinc"
+			kdestroy -a
+			kinit $username@JNPR.NET
+			ktic=$(klist | grep @JNPR.NET)
+			if [[ -z $ktic ]]
+			then
+				clear
+				echo "$title"
+				echo "$passf"
+				echo "$thku"
+				rm /Users/Shared/ez2.command 2> /dev/null
+				rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+				exit
+			fi
+		fi
+	fi 
+fi
+
+# restarting services
+rm -rf ~/.tblive-4/
+pkiagent=$(pgrep -f PKIClientAgent)
+kill $pkiagent
+
+sec=10
+while [ $sec \>  1 ]; do
+sleep 1
+: $((sec--))
+clear
+echo "$title"
+echo "$ty60"
+echo "Preparing system for enrollment - $sec"
+echo ""
+pkclient=$(pgrep -x "PKI Client")
+kill $pkclient 2> /dev/null
+done
+
+#initiating enrollment trigger
+pkiport=$(cat ~/.tblive-4/tblive.rat | grep -o 'TrayNotificationPort.*' | cut -f2- -d':' | grep -Eo '[0-9]{1,}')
+echo -e '\x01' | nc 127.0.0.1 $pkiport
+
+#waiting for popup.
+secs=90
+pki3=$(pgrep -x "PKI Client")
+while [ -z $pki3 ]; do
+	pki3=$(pgrep -x "PKI Client")
+	sleep 1
+	: $((secs--))
+	clear
+	echo "$title"
+	echo "$ty60"
+	echo "Enrolling - $secs"
+	echo ""
+	if [ $secs = "1" ]
+		then 
+		echo "$title"
+		echo "$enrollf"
+		echo "$thku"
+		rm /Users/Shared/ez2.command 2> /dev/null
+		rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+		exit
+	fi
+done
+
+#pop detected.
+while [ ! -z $pki3 ]; do
+	pki3=$(pgrep -x "PKI Client")
+	clear
+	echo "$title"
+	echo "$pkidetect"
+done
+
+# check cert
+findcert=$(security find-certificate -a | grep MACAE2)
+if [[ -z $findcert ]]
+	then
+	clear
+	echo "$title"
+	echo "$certnotfound"
+	echo "$thku"
+	rm /Users/Shared/ez2.command 2> /dev/null
+	rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+	exit
+fi
+
+# finish
+clear
+sec=20
+echo "$title"
+echo "$congrat"
+echo "Script clean up in progress - $sec.
+"
+echo "$thku"
+/Applications/Junos\ Pulse.app/Contents/Plugins/JamUI/jamCommand -importfile /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+/Applications/Pulse\ Secure.app/Contents/Plugins/JamUI/jamCommand -importfile /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+sleep 3
+
+# loop close
+while [ $sec \>  1 ]; do
+sleep 1
+: $((sec--))
+clear
+echo "$title"
+echo "$congrat"
+echo "Script clean up in progress - $sec.
+"
+echo "$thku"
+pkclient=$(pgrep -x "PKI Client")
+kill $pkclient 2> /dev/null
+done
+
+clear
+echo "$title"
+echo "$congrat"
+echo "Script clean up in progress - COMPLETE.
+"
+echo "$thku"
+
+# delete and exit
+rm /Users/Shared/ez2.command 2> /dev/null
+rm /Users/Shared/ez.components.jnprpreconfig 2> /dev/null
+exit
+
+EOF
+# end of file ez2.command
+
+# start me up
+chmod 777 /Users/Shared/ez2.command
+chmod 777 /Users/Shared/ez.components.jnprpreconfig
+chown $USER /Users/Shared/ez2.command
+chown $USER /Users/Shared/ez.components.jnprpreconfig
+
+#open script
+open -a Terminal /Users/Shared/ez2.command
+exit

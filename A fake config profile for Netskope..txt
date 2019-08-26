@@ -1,0 +1,37 @@
+﻿#!/bin/bash
+
+
+
+# Getting username
+
+SN=`ls /Users | grep -v Shared | grep -v .localized | grep -v _mbsetupuser |grep -v .DS_Store`
+
+UPN="$SN@juniper.net"
+
+
+
+#writing plist for netskope to pretend to install profile, as profile installs before we have the user name.
+
+sudo cat << EOF > /Library/Managed\ Preferences/com.juniper.netskope.plist 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>email</key>
+    <string>$UPN</string>
+    
+</dict>
+</plist>
+
+EOF
+
+chmod 644 /Library/Managed\ Preferences/com.juniper.netskope.plist 
+chown root:wheel /Library/Managed\ Preferences/com.juniper.netskope.plist 
+
+Sleep 15
+
+
+
+exit 0
+
+

@@ -1,0 +1,23 @@
+﻿#!/bin/bash
+
+dockStatus=$(pgrep -x Dock)
+
+while [ "$dockStatus" == "" ]; do
+  
+  sleep 3
+  dockStatus=$(pgrep -x Dock)
+  
+done
+
+
+Sleep 5
+# to prevent JSS policies from running 
+sudo launchctl unload /Library/LaunchDaemons/com.jamfsoftware.task.1.plist
+
+#Setting volume to 40%
+osascript -e "set volume output volume 30"
+
+Say "enrolling this mac in production jamf Pro"
+
+# not sleep will imaging.
+caffeinate -i -s -d -t 18000 & 
