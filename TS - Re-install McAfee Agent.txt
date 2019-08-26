@@ -1,0 +1,17 @@
+﻿#!/bin/bash
+
+# uninstall the DXL module
+
+/opt/McAfee/dx/bin/uninstall.sh > /dev/null 2>&1
+
+# uninstall current agent
+
+/Library/McAfee/agent/scripts/uninstall.sh > /dev/null 2>&1
+
+# install the downloaded agent
+
+/private/tmp/install.sh -i > /dev/null 2>&1
+
+# remove the installer
+
+rm /private/tmp/install.sh
