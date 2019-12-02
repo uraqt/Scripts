@@ -6,13 +6,13 @@
 
 SN=`ls /Users | grep -v Shared | grep -v .localized | grep -v _mbsetupuser |grep -v .DS_Store`
 
-UPN="$SN@juniper.net"
+UPN="$SN@XXXXX.net"
 
 
 
 #writing plist for netskope to pretend to install profile, as profile installs before we have the user name.
 
-sudo cat << EOF > /Library/Managed\ Preferences/com.juniper.netskope.plist 
+sudo cat << EOF > /Library/Managed\ Preferences/com.XXXX.netskope.plist 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -25,8 +25,8 @@ sudo cat << EOF > /Library/Managed\ Preferences/com.juniper.netskope.plist
 
 EOF
 
-chmod 644 /Library/Managed\ Preferences/com.juniper.netskope.plist 
-chown root:wheel /Library/Managed\ Preferences/com.juniper.netskope.plist 
+chmod 644 /Library/Managed\ Preferences/com.XXXX.netskope.plist 
+chown root:wheel /Library/Managed\ Preferences/com.XXXX.netskope.plist 
 
 Sleep 15
 
