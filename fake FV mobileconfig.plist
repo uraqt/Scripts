@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadDescription</key>
+			<string></string>
+			<key>PayloadDisplayName</key>
+			<string>MCX</string>
+			<key>PayloadEnabled</key>
+			<true/>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.MCX.243782F3-117D-4217-A9BB-94D30CE9E502</string>
+			<key>PayloadOrganization</key>
+			<string>Org Name XXX</string>
+			<key>PayloadType</key>
+			<string>com.apple.MCX</string>
+			<key>PayloadUUID</key>
+			<string>243782F3-117D-4217-A9BB-94D30CE9E502</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>dontAllowFDEDisable</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Defer</key>
+			<true/>
+			<key>DeferDontAskAtUserLogout</key>
+			<string>YES</string>
+			<key>DeferForceAtUserLoginMaxBypassAttempts</key>
+			<integer>0</integer>
+			<key>Enable</key>
+			<string>On</string>
+			<key>PayloadCertificateUUID</key>
+			<string></string>
+			<key>PayloadDescription</key>
+			<string></string>
+			<key>PayloadDisplayName</key>
+			<string>SecurityFileVault2</string>
+			<key>PayloadEnabled</key>
+			<true/>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.MCX.FileVault2.283FACC8-7F02-4F66-8285-74F02171D612</string>
+			<key>PayloadOrganization</key>
+			<string>Org Name XXX</string>
+			<key>PayloadType</key>
+			<string>com.apple.MCX.FileVault2</string>
+			<key>PayloadUUID</key>
+			<string>283FACC8-7F02-4F66-8285-74F02171D612</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>ShowRecoveryKey</key>
+			<string>NO</string>
+			<key>UseRecoveryKey</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>EncryptCertPayloadUUID</key>
+			<string>515851b2-9b26-4739-9801-0675a7584317</string>
+			<key>Location</key>
+			<string>DEV</string>
+			<key>PayloadDescription</key>
+			<string></string>
+			<key>PayloadDisplayName</key>
+			<string>FileVault Recovery Key Escrow</string>
+			<key>PayloadEnabled</key>
+			<true/>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.security.FDERecoveryKeyEscrow.02496464-E930-4FF4-AE7B-300E89060566</string>
+			<key>PayloadOrganization</key>
+			<string>Org Name XXX</string>
+			<key>PayloadType</key>
+			<string>com.apple.security.FDERecoveryKeyEscrow</string>
+			<key>PayloadUUID</key>
+			<string>02496464-E930-4FF4-AE7B-300E89060566</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>AllowAllAppsAccess</key>
+			<false/>
+			<key>PayloadCertificateFileName</key>
+			<string>FileVault2Comm.cer</string>
+			<key>PayloadContent</key>
+			<data>MIIDw2ZmZqugAwIBAgIFANqIn4YwDQYJKoZIhvcNAQELBQAwRDFCMEAGA1UEAxM5ZUhlYWx0aCBJbnN1cmFuY2UgSW5jLiBKU1MgQnVpbHQtaW4gQ2VydGlmaWNhdGUgQXV0aG9yaXR5MB4XDTE5MDQyMzE1NDgyNFoXDTI0MDQyNDE1NDgyNFowRDEXMBUGA1UECxMORklMRVZBVUxUMkNPTU0xKTAnBgNVBAMTIEpTUyBCdWlsdC1JbiBTaWduaW5nIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAme/Bf7LRZnlXb3laR0FR7mXkeciflZhqq92tUSjORWWCJqiLBhQ/y6rrSTVqmgDPI+58cE9o1ZYwrjCBURS1m3uXR8hHr3fpt9xCjnpvby76LTW5k/yXJxUWyRpiaC5YNeCoA2f44EImeBrgB/vX0JkSCNTlPH8gm4To+IUCYd6OQGc09wVe5HjA2dLQhuCGRRR7lFOk5kETlW0/gMtZF71Kjbxiib6Gvi3UGjgCjfu57kBpamZkGQJw1i7po4abIDjgVo+1ApmFzhu7vFmuDikA9lNvhl61wUhEtLCNVwMwgg5cT9djzCfr4GuI3vXx+PXcbV2Z5CEe+ZV2HFigcwIDAQABo4G7MIG4MB0GA1UdDgQWBBRhCor7ja+7PoKLBTFcu1Kw/U3CZDATBgNVHSUEDDAKBggrBgEFBQcDATAOBgNVHQ8BAf8EBAMCAaYwDAYDVR0TAQH/BAIwADBDBgNVHR8EPDA6MDigNqA0hjJodHRwczovL2VoZWF0aGRldi5qYW1mY2xvdWQuY29tLy9DQS9KQU1GQ1JMU2VydmxldDAfBgNVHSMEGDAWgBT/zQxlM50hS3AZB76MW0Oue/kh6zANBgkqhkiG9w0BAQsFAAOCAQEAHjmMmrWC4Jr2oH6H1oyD+H7E//clgPxMT0ooGdGPoEpUdBklOUOOaHSGR7JrzuB37nUUt5UAXsLUZDssR2J3uDq5ntOPZRB7Kyk1w87aW+YnPs6mE9V8xPVU58JE8myh4UGepTgk7KUlPtzlcLvC54NAmBd7Iov3oPl2NmcBxCqbnx9O7CmG/KGJZQnmtwiAQRC5hhcAZhIAydbPazosuGghIbCKFKCH8krclMeMnjE8Vq0KnMmlX+y+9EDeMMpCKRwEm08m1DZKeJyO0nzkvIZ2/ARMBVYag+Rr/GjQuiApMKBTAeIUQ3co2jvKKkvAvFqErmiUvJ8Sv5L5/VF/Cg==</data>
+			<key>PayloadDescription</key>
+			<string></string>
+			<key>PayloadDisplayName</key>
+			<string>JSS FileVault Recovery Key Escrow Certificate</string>
+			<key>PayloadEnabled</key>
+			<true/>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.security.pkcs1.515851b2-9b26-4739-9801-0675a7584316</string>
+			<key>PayloadOrganization</key>
+			<string>Org Name XXX</string>
+			<key>PayloadType</key>
+			<string>com.apple.security.pkcs1</string>
+			<key>PayloadUUID</key>
+			<string>515851b2-9b26-4739-9801-0675a7584316</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string></string>
+	<key>PayloadDisplayName</key>
+	<string>FV</string>
+	<key>PayloadEnabled</key>
+	<true/>
+	<key>PayloadIdentifier</key>
+	<string>2BF4BE32-F158-45CF-B0BE-89FA22ABB2D3</string>
+	<key>PayloadOrganization</key>
+	<string>Org Name XXX</string>
+	<key>PayloadRemovalDisallowed</key>
+	<true/>
+	<key>PayloadScope</key>
+	<string>System</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>C92479C3-E8A1-4F66-ACF7-B80316C93C2B</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
