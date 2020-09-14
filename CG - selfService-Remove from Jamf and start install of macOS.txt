@@ -1,0 +1,22 @@
+#!/bin/bash
+
+
+# getting UUID
+UUID=$(/usr/sbin/ioreg -rd1 -c IOPlatformExpertDevice | /usr/bin/grep -i "UUID" | /usr/bin/cut -c27-62)
+
+
+# deleting computer from Jamf Pro with UUID
+curl -k -v -u username:password https://XXXXXXX.jamfcloud.com/JSSResource/computers/udid/$UUID -X DELETE
+
+
+#Setting volume to 20%
+osascript -e "set volume output volume 20"
+
+say rebooting and installing Catalina
+
+#/usr/local/Install\ macOS\ Catalina.app/Contents/Resources/startosinstall --agreetolicense --nointeraction --eraseinstall --newvolumename Macintosh\ HD
+
+selfService=$(pgrep "Self Service"); /usr/local/Install\ macOS\ Catalina.app/Contents/Resources/startosinstall --eraseinstall --newvolumename Macintosh\ HD --agreetolicense --rebootdelay 5 --nointeraction --pidtosignal "$selfService"
+
+exit $?
+
