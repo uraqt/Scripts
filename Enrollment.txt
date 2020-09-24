@@ -1,0 +1,247 @@
+#!/bin/bash
+
+
+#Stall for user load in DEP 
+dockStatus=$(pgrep -x Dock)
+
+
+echo "Waiting for Desktop..."
+
+while [[ "$dockStatus" == "" ]]
+do
+  echo "Desktop is not loaded. Waiting."
+  sleep 5
+  dockStatus=$(pgrep -x Dock)
+done
+
+
+#Setting volume to 30%
+osascript -e "set volume output volume 30"
+
+
+say enabling File Vault two
+# Event to enabling File Vault two
+/usr/local/bin/jamf policy -event FV2
+
+
+# forcing password chang.
+#pwpolicy -u $3 -setpolicy "newPasswordRequired=1"
+
+# looking for all network conections, sometime thunderbolt adapters are missed
+/usr/sbin/networksetup -detectnewhardware
+
+
+# Dummy package with image date and OS
+TD=`date +"%Y %m"`
+OS=Big Sur
+touch /Library/Application\ Support/JAMF/Receipts/"$OS $TD".pkg
+
+
+
+# Getting username
+SN=`ls /Users | grep -v Shared | grep -v .localized | grep -v _mbsetupuser |grep -v .DS_Store | grep -v tdyyhesobhiiwoemepanultaerayfn`
+
+echo "$sn"
+
+
+# Creating machine name
+
+# Getting Hardware type
+HW=`sysctl hw.model |cut -c9-21| sed 's/[0-9 : . ,]*//g'`
+
+if [[ "$HW" == "MacBookPro" ]]; then
+MCN=$SN-mbp
+elif [[ "$HW" == "MacBookAir" ]]; then
+MCN=$SN-mba
+else
+MCN=$SN-macOS
+fi
+
+
+# Replacing computer name
+scutil --set HostName $MCN
+scutil --set ComputerName $MCN
+scutil --set LocalHostName $MCN
+
+
+# Computer wide settings CIS
+defaults write /Library/Preferences/com.apple.RemoteManagement LoadRemoteManagementMenuExtra -bool True
+defaults write /Library/Preferences/com.apple.Bluetooth BluetoothAutoSeekHIDDevices -bool False
+defaults write /Library/Preferences/com.apple.Bluetooth ControllerPowerState -bool False
+defaults write /Library/Preferences/com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool True
+defaults write /Library/Preferences/com.apple.alf globalstate -int 1 
+defaults write /Library/Preferences/.GlobalPreferences PMPrintingExpandedStateForPrint -bool TRUE
+defaults write /Library/Preferences/com.apple.driver.AppleIRController DeviceEnabled -bool no
+defaults write /Library/Preferences/com.apple.AppleFileServer guestAccess -bool no
+defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server AllowGuestAccess -bool no
+defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo IPAddress
+defaults write /Library/Preferences/com.apple.loginwindow Hide500Users -bool True
+
+
+
+# Set screen sleep 20 min CIS
+sudo pmset -b displaysleep 20
+sudo pmset -c displaysleep 20
+
+# Set wake for access off CIS
+sudo pmset -c womp 0
+
+# Getting username
+velo=`ls /Users | grep -v admin | grep -v Shared | grep -v .localized | grep -v _mbsetupuser | grep -v .DS_Store | grep -v tdyyhesobhiiwoemepanultaerayfn`
+
+say installing 
+# Event to install 
+/usr/local/bin/jamf policy -event 
+
+
+# CIS 2.8 Enable Secure Keyboard Entry in terminal.app
+#/usr/libexec/PlistBuddy -c "delete SecureKeyboardEntry bool True" /Users/$velo/Library/Preferences/com.apple.Terminal.plist
+/usr/libexec/PlistBuddy -c "add SecureKeyboardEntry bool True" /Users/$velo/Library/Preferences/com.apple.Terminal.plist
+
+# Setting keyboard to tab all 
+/usr/libexec/PlistBuddy -c "add AppleKeyboardUIMode integer 2" /Users/$velo/Library/Preferences/.GlobalPreferences.plist
+
+# Getting UUID for byhost plists
+# UUID=`ioreg -rd1 -c IOPlatformExpertDevice | grep -i "UUID" | cut -c27-62 | awk {'print toupper()'}`
+
+# Activates the show all file extensions CIS
+/usr/libexec/PlistBuddy -c "add AppleShowAllExtensions bool True" /Users/$velo/Library/Preferences/.GlobalPreferences.plist
+
+# Activates CRLStyle cert CIS
+/usr/libexec/PlistBuddy -c "add CRLStyle string RequireIfPresent" /Users/$velo/Library/Preferences/com.apple.security.revocation.plist
+
+# Activates OCSPStyle cert CIS
+/usr/libexec/PlistBuddy -c "add OCSPStyle string RequireIfPresent" /Users/$velo/Library/Preferences/com.apple.security.revocation.plist
+
+
+# Access warning for the command line, screensaver and login window (CIS Requirement 1.2.3)
+
+echo "#######################################################################
+This computer system is the private property of XXXX
+#################################################
+" >> "/etc/motd"
+
+say installing 
+# Event to 
+/usr/local/bin/jamf policy -event 
+
+#Increase the retention time for install log
+perl -p -i -e 's/file_max=50M all_max=150M size_only/file_max=5M ttl=31/g' "/etc/asl/com.apple.install"
+
+# Removing .plist so byhost .plist load
+rm /Users/$velo/Library/Preferences/com.apple.systemuiserver.plist
+
+# Access warning for the FV2 - move to profile
+# defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "This computer system is the private property of XXXX."
+
+# CIS 5.6 Require password for system wide system prefs.
+security authorizationdb read system.preferences > /tmp/system.preferences.plist
+/usr/libexec/PlistBuddy -c "Set :shared false" /tmp/system.preferences.plist
+security authorizationdb write system.preferences < /tmp/system.preferences.plist
+
+# CIS 3.3 audit_control flags setting.  removed ^-fa,^-fc,^-cl 
+sudo perl -p -i -e 's|flags:lo,aa|flags:lo,aa,ad,fd,fm,-all,^-fa,^-fc,^-cl|g' /private/etc/security/audit_control
+
+#perl -p -i -e 's|flags:lo,aa|flags:lo,aa,ad,fd,fm,-all|g' /private/etc/security/audit_control
+#perl -p -i -e 's|filesz:2M|filesz:10M|g' /private/etc/security/audit_control
+#perl -p -i -e 's|expire-after:10M|expire-after: 30d |g' /private/etc/security/audit_control
+
+# Changing ~ home read persions per CIS to 700
+chmod 700 /Users/$velo
+
+# Removing  branding 
+
+#Bluetooth menu bar CIS 213
+su - $3 open /System/Library/CoreServices/Menu\ Extras/Bluetooth.menu
+
+
+# Run Recon to update JSS record with the new computer name created in the admin script
+sudo jamf recon
+
+
+#Setting volume to 30%
+#osascript -e "set volume output volume 30"
+#say cleaning up and rebooting 
+
+#Bluetooth menu bar CIS 213
+open /System/Library/CoreServices/Menu\ Extras/Bluetooth.menu
+
+say installing 
+# Event to installing 
+/usr/local/bin/jamf policy -event 
+
+sleep 1
+
+say installing 
+# Event to installing 
+/usr/local/bin/jamf policy -event 
+
+
+Sleep 10
+
+
+#Writing LaunchAgent for JamfConnect
+cat << EOF > /Library/LaunchAgents/com.jamf.connect.sync.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>KeepAlive</key>
+	<true/>
+	<key>Label</key>
+	<string>com.jamf.connect.syncLA</string>
+	<key>LimitLoadToSessionType</key>
+	<array>
+		<string>Aqua</string>
+	</array>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Applications/Jamf Connect Sync.app/Contents/MacOS/Jamf Connect Sync</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+</dict>
+</plist>
+EOF
+
+#Setting the permission on the above LaunchAgent for JamfConnect
+chmod 644 /Library/LaunchAgents/com.jamf.connect.sync.plist
+chown root:wheel /Library/LaunchAgents/com.jamf.connect.sync.plist
+
+#Re-enable JSS policies to run.
+Sudo launchctl load /Library/LaunchDaemons/com.jamfsoftware.task.1.plist
+
+
+# Setting DHCP client ID
+BCN=`scutil --get HostName`
+
+NE=`/usr/sbin/networksetup -listallhardwareports | grep -A 1 Wi-Fi | grep Device | cut -c 9-12`
+
+if [[ "$NE" == "en1" ]]; then
+networksetup -setdhcp Ethernet "$BCN"
+networksetup -setdhcp Wi-Fi "$BCN"
+elif [[ "$NE" == "en0" ]]; then
+networksetup -setdhcp Wi-Fi "$BCN"
+networksetup -setdhcp "Thunderbolt Bridge" "$BCN"
+else
+echo error
+fi
+
+
+#delete enroll profiles
+sudo rm /Users/$SN/Downloads/enrollmentProfile.mobileconfig 
+sudo rm /Users/$SN/Downloads/CA\ Certificate.mobileconfig 
+
+
+say installing Net scope
+# Event to run Netskope
+/usr/local/bin/jamf policy -event INS
+
+#Deleting DEPNotify window/app
+#rm -r /Applications/Utilities/DEPNotify.app
+
+touch /usr/local/finished
+
+exit $?
+
